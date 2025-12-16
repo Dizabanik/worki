@@ -58,9 +58,6 @@ static void link_worek(worek *w, Container *c) {
 
 // Helper to update a worek metadata
 static void update_worek_counts(worek *w) {
-	// Sync legacy int with actual total
-	w->liczba_przedmiotow = w->inner_loc->total_items;
-
 	// Calculate the change in this worek's size since last update
 	int current_total = w->inner_loc->total_items;
 	int diff = current_total - w->contribution;
@@ -90,7 +87,6 @@ worek *nowy_worek() {
 	worek *w = new worek;
 	w->idx = next_idx++;
 	w->parent = nullptr;
-	w->liczba_przedmiotow = 0;
 	w->contribution = 0;
 
 	w->inner_loc = new Container{w, nullptr, nullptr, 0};
@@ -184,7 +180,7 @@ int w_ktorym_worku(worek *w) {
 	return w->loc->owner->idx;
 }
 
-int ile_przedmiotow(worek *w) { return w->liczba_przedmiotow; }
+int ile_przedmiotow(worek *w) { return w->inner_loc->total_items; }
 
 void na_odwrot(worek *w) {
 	// Preparations
@@ -214,9 +210,6 @@ void na_odwrot(worek *w) {
 	w->contribution = w->inner_loc->total_items;
 	// New desk total increases by w's size
 	desk_container->total_items += w->contribution;
-
-	// Sync legacy count
-	w->liczba_przedmiotow = w->inner_loc->total_items;
 }
 
 // Cleanup
