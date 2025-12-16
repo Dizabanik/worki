@@ -4,9 +4,17 @@
 struct worek;
 struct przedmiot;
 
+/*
+ * We use a `Container` struct to unify storage logic. Both the global "Desk"
+ * and the interior of each "Worek" are treated as Containers. This allows:
+ * - Unified management of double-linked lists for items and sub-bags.
+ * - O(1) implementation of `na_odwrot` by simply swapping Container pointers
+ *   between a specific Worek and the Desk.
+ */
+
 // A Container represents a storage location
 struct Container {
-	// The bag that owns this container. NULL means this container is the desk
+	// The 'worek' that owns this container. NULL means this container is the desk
 	worek *owner;
 	// Head of 'przedmiot' list
 	przedmiot *first_przedmiot;
@@ -36,8 +44,14 @@ struct worek {
 	// Cached total number of 'przedmiot's contained in this 'worek' (directly
 	// and indirectly)
 	int liczba_przedmiotow;
-	// Number of 'przedmiot's this 'worek' contributes to its parent container
+	// Stores the total number of items this bag
+	// contributes to its parent Container's count.
 	int contribution;
+	/*
+	 *   When a bag's contents change, we calculate the delta (new total - old
+	 *   contribution) and propagate only that difference upward to the parent,
+	 *   then update `contribution` to reflect the new total.
+	 */
 
 	// Parent 'worek', or NULL if on desk
 	worek *parent;
