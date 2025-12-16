@@ -5,11 +5,9 @@ struct worek;
 struct przedmiot;
 
 /*
- * We use a `Container` struct to unify storage logic. Both the global "Desk"
- * and the interior of each "Worek" are treated as Containers. This allows:
- * - Unified management of double-linked lists for items and sub-bags.
- * - O(1) implementation of `na_odwrot` by simply swapping Container pointers
- *   between a specific Worek and the Desk.
+ * We use a 'Container' struct to unify storage logic. Both the global 'Desk'
+ * and the interior of each 'worek' are treated as Containers. This allows
+ * simply swapping Container pointers between a specific 'worek' and the Desk.
  */
 
 // A Container represents a storage location
