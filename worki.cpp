@@ -3,7 +3,7 @@
 
 // Global variables
 
-static int next_num = 0;
+static int next_idx = 0;
 static Container *desk_container = nullptr;
 
 static void init_if_needed() {
@@ -90,7 +90,7 @@ przedmiot *nowy_przedmiot() {
 worek *nowy_worek() {
 	init_if_needed();
 	worek *w = new worek;
-	w->idx = next_num++;
+	w->idx = next_idx++;
 	w->parent = nullptr;
 	w->liczba_przedmiotow = 0;
 	w->contribution = 0;
@@ -246,5 +246,5 @@ void gotowe() {
 		free_container(desk_container);
 		desk_container = nullptr;
 	}
-	next_num = 0;
+	next_idx = 0;
 }
