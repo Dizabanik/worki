@@ -56,22 +56,20 @@ static void link_worek(worek *w, Container *c) {
 	c->first_worek = w;
 }
 
-// Helper to update a bag's metadata
-static void update_bag_counts(worek *w) {
+// Helper to update a worek metadata
+static void update_worek_counts(worek *w) {
 	// Sync legacy int with actual total
 	w->liczba_przedmiotow = w->inner_loc->total_items;
 
-	// Calculate the change in this bag's size since last update
+	// Calculate the change in this worek's size since last update
 	int current_total = w->inner_loc->total_items;
 	int diff = current_total - w->contribution;
 
 	// Propagate difference to the parent container
-	if (diff != 0) {
-		if (w->loc) {
-			w->loc->total_items += diff;
-		}
-		w->contribution = current_total;
+	if (w->loc) {
+		w->loc->total_items += diff;
 	}
+	w->contribution = current_total;
 }
 
 // Implementation
@@ -107,13 +105,13 @@ void wloz(przedmiot *co, worek *gdzie) {
 	unlink_przedmiot(co);
 	desk_container->total_items--;
 
-	// Add to Bag
+	// Add to worek
 	link_przedmiot(co, gdzie->inner_loc);
 	gdzie->inner_loc->total_items++;
 	co->parent = gdzie;
 
-	// Update Bag counts and propagate growth to Desk
-	update_bag_counts(gdzie);
+	// Update worek counts and propagate growth to Desk
+	update_worek_counts(gdzie);
 }
 
 void wloz(worek *co, worek *gdzie) {
@@ -131,13 +129,13 @@ void wloz(worek *co, worek *gdzie) {
 	co->contribution = co->inner_loc->total_items;
 
 	// Update 'gdzie' counts and propagate growth to Desk
-	update_bag_counts(gdzie);
+	update_worek_counts(gdzie);
 }
 
 void wyjmij(przedmiot *p) {
-	worek *old_bag = p->loc->owner;
+	worek *old_worek = p->loc->owner;
 
-	// Remove from Bag
+	// Remove from worek
 	unlink_przedmiot(p);
 	p->loc->total_items--;
 
@@ -146,16 +144,16 @@ void wyjmij(przedmiot *p) {
 	desk_container->total_items++;
 	p->parent = nullptr;
 
-	// Update old Bag
-	if (old_bag) {
-		update_bag_counts(old_bag);
+	// Update old worek
+	if (old_worek) {
+		update_worek_counts(old_worek);
 	}
 }
 
 void wyjmij(worek *w) {
-	worek *old_bag = w->loc->owner;
+	worek *old_worek = w->loc->owner;
 
-	// Remove from Bag
+	// Remove from worek
 	unlink_worek(w);
 	w->loc->total_items -= w->contribution;
 
@@ -168,9 +166,9 @@ void wyjmij(worek *w) {
 	// Reset w's contribution logic now that it's on Desk
 	w->contribution = w->inner_loc->total_items;
 
-	// Update old Bag
-	if (old_bag) {
-		update_bag_counts(old_bag);
+	// Update old worek
+	if (old_worek) {
+		update_worek_counts(old_worek);
 	}
 }
 
@@ -189,19 +187,19 @@ int w_ktorym_worku(worek *w) {
 int ile_przedmiotow(worek *w) { return w->liczba_przedmiotow; }
 
 void na_odwrot(worek *w) {
-	// Prepare
+	// Preparations
 	Container *desk = desk_container;
-	Container *bag_inner = w->inner_loc;
+	Container *worek_inner = w->inner_loc;
 
-	// Remove w from Desk so it isn't part of the swap
+	// Remove 'w' from Desk so it isn't part of the swap
 	unlink_worek(w);
 	desk->total_items -= w->contribution;
 
-	// Swap Identies
-	desk_container = bag_inner;
+	// Swap identies
+	desk_container = worek_inner;
 	w->inner_loc = desk;
 
-	// Update Owners
+	// Update owners
 	desk_container->owner = nullptr;
 	w->inner_loc->owner = w;
 
