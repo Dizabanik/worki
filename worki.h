@@ -39,9 +39,6 @@ struct worek {
 	Container *inner_loc;
 	// Links for the container's list
 	worek *prev, *next;
-	// Cached total number of 'przedmiot's contained in this 'worek' (directly
-	// and indirectly)
-	int liczba_przedmiotow;
 	// Stores the total number of items this bag
 	// contributes to its parent Container's count.
 	int contribution;
